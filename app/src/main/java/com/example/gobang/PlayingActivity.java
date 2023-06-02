@@ -1,22 +1,18 @@
 package com.example.gobang;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.os.Bundle;
-import android.view.Display;
 import android.view.View;
 
-import android.view.WindowManager;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
-import org.w3c.dom.Text;
+import com.example.gobang.peer.ChessBoardASync;
 
 public class PlayingActivity extends AppCompatActivity {
-    private ChessBoardView chessBoard;
+    private ChessBoardASync chessBoard;
     private TextView turnView, repentMsgView;
     /* Called by chessBoard when it is clicked
     * This method display this turn is whose turn */
@@ -32,13 +28,42 @@ public class PlayingActivity extends AppCompatActivity {
         turnView=findViewById(R.id.textView);
         repentMsgView=findViewById(R.id.textView2);
         self=this;
-        chessBoard.setParent(this);
+        loop();
+    }
+    private void loop(){
+        chessBoard.postClick((x, y)->{
+            showMessageIfWin(chessBoard.placeChess(x,y));
+            setRepentMsgText("");
+            //現在是誰
+            if(chessBoard.getRound()%2==0){
+                setTurnText("現在輪到:黑");
+            }else{
+                setTurnText("現在輪到:白");
+            }
+            loop();
+        });
     }
     public void restart_listener(View view){
+        setTurnText("現在輪到:黑");
+        setRepentMsgText("");
         chessBoard.reset();
     }
 
-    public  void repent_listener(View view){chessBoard.repentChess();}
+    public  void repent_listener(View view){
+        int ret = chessBoard.repentChess();
+        if(chessBoard.getRound()%2==0){
+            setTurnText("現在輪到:黑");
+        }else{
+            setTurnText("現在輪到:白");
+        }
+        if (ret==-1){
+            setRepentMsgText("你還沒有下棋！");
+        }
+        else if (ret==-2){
+            setRepentMsgText("你只能悔棋一次！");
+        }
+        chessBoard.invalidate();
+    }
 
     public  void back_to_home_listener(View view){
         Intent attractionIntent = new Intent(this, MainActivity.class);

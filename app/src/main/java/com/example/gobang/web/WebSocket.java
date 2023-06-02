@@ -14,7 +14,7 @@ public class WebSocket {
         public InputStreamLV(InputStream in){
             this.in=in;
         }
-        public byte[] readNBytes(int len) throws IOException {
+        protected byte[] readNBytes(int len) throws IOException {
             if (len < 0) {
                 throw new IllegalArgumentException("len < 0");
             }

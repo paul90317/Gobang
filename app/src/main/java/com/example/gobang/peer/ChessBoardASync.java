@@ -8,7 +8,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -65,6 +64,12 @@ public class ChessBoardASync extends View {
         invalidate();
         return temp;
     }
+    public int repentChess(){
+        return game.repentChess();
+    }
+    public int getRound(){
+        return game.getRound();
+    }
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -90,8 +95,8 @@ public class ChessBoardASync extends View {
             }
         }
     }
-    private ChessPlaceHandler chessPlaceHandler =null;
-    public void onChessPlaceOnce(ChessPlaceHandler chessPlaceHandler){
+    private ChessPlaceHandler chessPlaceHandler = null;
+    public void postClick(ChessPlaceHandler chessPlaceHandler){
         this.chessPlaceHandler = chessPlaceHandler;
     }
     /**覆寫:偵測使用者觸碰螢幕的事件*/
@@ -110,8 +115,9 @@ public class ChessBoardASync extends View {
         switch (event.getAction()){
             case MotionEvent.ACTION_UP:
                 if (game.getChessColor(x, y) == 0 && chessPlaceHandler != null) {
-                    chessPlaceHandler.run(x, y);
+                    ChessPlaceHandler temp = chessPlaceHandler;
                     chessPlaceHandler = null;
+                    temp.run(x, y);
                 }
                 checkY=checkX=-1;
                 break;
@@ -131,5 +137,9 @@ public class ChessBoardASync extends View {
 
         invalidate();
         return true;
+    }
+    public void reset(){
+        game.reset();
+        invalidate();
     }
 }

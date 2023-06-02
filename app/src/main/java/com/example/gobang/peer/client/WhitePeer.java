@@ -1,25 +1,15 @@
 package com.example.gobang.peer.client;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
-import androidx.annotation.NonUiContext;
 import androidx.annotation.UiThread;
-import com.example.gobang.MainActivity;
-import com.example.gobang.R;
-import com.example.gobang.peer.ChessBoardASync;
 import com.example.gobang.peer.CreationDialog;
 import com.example.gobang.peer.PeerActivity;
 import com.example.gobang.web.WebSocket;
 
 import java.net.Socket;
-import java.util.concurrent.*;
 
 public class WhitePeer extends PeerActivity {
 
@@ -98,7 +88,7 @@ public class WhitePeer extends PeerActivity {
                     dotShow=false;
                     dotUpdateOnce();
                     statusView.setText("輪到你了");
-                    player.onChessPlaceOnce((x,y)->{
+                    player.postClick((x, y)->{
                         int win1=player.placeChess(x,y);
                         if(ifContinue(win1)){
                             webHandler.submit(()->{
