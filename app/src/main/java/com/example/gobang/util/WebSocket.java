@@ -1,4 +1,4 @@
-package com.example.gobang.web;
+package com.example.gobang.util;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +14,7 @@ public class WebSocket {
         public InputStreamLV(InputStream in){
             this.in=in;
         }
-        protected byte[] readNBytes(int len) throws IOException {
+        private byte[] readNBytes(int len) throws IOException {
             if (len < 0) {
                 throw new IllegalArgumentException("len < 0");
             }

@@ -59,9 +59,6 @@ public class PlayingActivity extends AppCompatActivity {
         if (ret==-1){
             setRepentMsgText("你還沒有下棋！");
         }
-        else if (ret==-2){
-            setRepentMsgText("你只能悔棋一次！");
-        }
         chessBoard.invalidate();
     }
 

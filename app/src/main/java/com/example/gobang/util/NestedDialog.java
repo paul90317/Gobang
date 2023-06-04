@@ -1,19 +1,16 @@
-package com.example.gobang.peer;
+package com.example.gobang.util;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.text.InputType;
-import android.view.View;
 import android.widget.EditText;
 import androidx.annotation.UiThread;
 import com.example.gobang.MainActivity;
 
-public class CreationDialog {
+public class NestedDialog {
     private AlertDialog alertDialog;
     protected final Context self;
-    public CreationDialog(Context self){
+    public NestedDialog(Context self){
         this.self=self;
     }
     @UiThread

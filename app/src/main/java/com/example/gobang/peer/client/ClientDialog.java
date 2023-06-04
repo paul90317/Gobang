@@ -1,21 +1,11 @@
 package com.example.gobang.peer.client;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.InputType;
-import android.widget.EditText;
-import androidx.annotation.UiContext;
 import androidx.annotation.UiThread;
-import com.example.gobang.MainActivity;
-import com.example.gobang.peer.CreationDialog;
-import com.example.gobang.peer.PeerActivity;
+import com.example.gobang.util.NestedDialog;
 
-import java.util.concurrent.CompletableFuture;
-
-public abstract class ClientDialog extends CreationDialog {
+public abstract class ClientDialog extends NestedDialog {
     private void parseAddressPort(String addressPort)throws Exception{
         String[] temp=addressPort.split(":");
         if(temp.length==2){

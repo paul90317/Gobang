@@ -1,4 +1,4 @@
-package com.example.gobang.web;
+package com.example.gobang.util;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-public class IPAddressUtil {
+public class IPAddress {
     public static List<String> getIPAddress() throws Exception{
         List<String> temp=new ArrayList<String>();
         Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();

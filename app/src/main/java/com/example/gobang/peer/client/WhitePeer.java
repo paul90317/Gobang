@@ -5,9 +5,9 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
 import androidx.annotation.UiThread;
-import com.example.gobang.peer.CreationDialog;
+import com.example.gobang.util.NestedDialog;
 import com.example.gobang.peer.PeerActivity;
-import com.example.gobang.web.WebSocket;
+import com.example.gobang.util.WebSocket;
 
 import java.net.Socket;
 
@@ -15,7 +15,7 @@ public class WhitePeer extends PeerActivity {
 
     @UiThread
     private void init(){
-        CreationDialog preDialog=new ClientDialog(self) {
+        NestedDialog preDialog=new ClientDialog(self) {
             @Override
             public void onCreate(String address, int port) {
                 switch (port){
@@ -44,7 +44,7 @@ public class WhitePeer extends PeerActivity {
     }
     @UiThread
     private boolean ifContinue(int win){
-        CreationDialog dialog=new CreationDialog(self);
+        NestedDialog dialog=new NestedDialog(self);
         switch(win){
             case Color.BLACK:
                 dialog.alert("遊戲結束","你輸了!","回主畫面",()->{
@@ -56,7 +56,7 @@ public class WhitePeer extends PeerActivity {
                     exit();
                 });
                 break;
-            case -2:
+            case Color.GRAY:
                 dialog.alert("遊戲結束","平局!","回主畫面",()->{
                     exit();
                 });
@@ -83,14 +83,12 @@ public class WhitePeer extends PeerActivity {
                 return;
             }
             UIHandler.post(()->{
-                int win=player.placeChess(point[0],point[1]);
-                if(ifContinue(win)){
+                if(ifContinue(player.placeChess(point[0],point[1]))){
                     dotShow=false;
                     dotUpdateOnce();
                     statusView.setText("輪到你了");
                     player.postClick((x, y)->{
-                        int win1=player.placeChess(x,y);
-                        if(ifContinue(win1)){
+                        if(ifContinue(player.placeChess(x,y))){
                             webHandler.submit(()->{
                                 try{
                                     anotherPlayer.send(new byte[]{x,y});

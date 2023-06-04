@@ -59,7 +59,7 @@ public class ChessBoardASync extends View {
         //初始化空畫布
         gridSize =(float)getHeight()/13;
     }
-    public int placeChess(int x,int y){
+    public int placeChess(byte x,byte y){
         int temp = game.placeChess(x,y);
         invalidate();
         return temp;
@@ -83,7 +83,7 @@ public class ChessBoardASync extends View {
             canvas.drawRect(0, checkY*gridSize+gridSize*0.4f, getWidth(), checkY*gridSize+gridSize*0.6f, greenPaint);
             canvas.drawRect(checkX*gridSize+gridSize*0.4f, 0, checkX*gridSize+gridSize*0.6f, getHeight(), greenPaint);
         }
-        int[] point = game.getLastMove();
+        byte[] point = game.getLastMove();
         if(point[0]>=0){
             canvas.drawRect(point[0]*gridSize+gridSize*0.1f, point[1]*gridSize+gridSize*0.1f, point[0]*gridSize+gridSize*0.9f, point[1]*gridSize+gridSize*0.9f, redPaint);
         }

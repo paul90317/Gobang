@@ -1,44 +1,39 @@
 package com.example.gobang;
 
 import android.graphics.Color;
-import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Gobang {
     public Gobang(){
         chessMap=new int[13][13];
-        round=0;
-        lastMoveX=-1;
-        lastMoveY=-1;
+        moves =new ArrayList<>();
     }
     public int getRound(){
-        return round;
+        return moves.size();
     }
     public int getChessColor(int x,int y){
         return chessMap[x][y];
     }
-    private int round;
     private final int[][] chessMap;
-
-    private int lastMoveX, lastMoveY;
-    public int[] getLastMove(){
-        return new int[]{lastMoveX,lastMoveY};
+    private final List<byte []> moves;
+    public byte[] getLastMove(){
+        if(moves.size()>0)
+            return moves.get(moves.size() - 1);
+        return new byte[]{-1,-1};
     }
-    /* 根據 round 下一子，回傳勝利方顏色，沒人勝利則傳 0，滿子和局則回傳-2*/
+    /* 根據 round 下一子，回傳勝利方顏色，沒人勝利則傳 0，滿子和局則回傳灰色*/
     /*黑色值: -16777216，白色值: -1*/
-    public int placeChess(int x, int y) {
-        if(chessMap[x][y]==0) {
-            if ((round++) % 2 == 0) {
-                chessMap[x][y] = Color.BLACK;
-            } else {
-                chessMap[x][y] = Color.WHITE;
-            }
-            Log.i("round: ", String.valueOf(round));
-            Log.i("color: ", String.valueOf(chessMap[x][y]));
-            lastMoveX = x;
-            lastMoveY = y;
+    public int placeChess(byte x, byte y) {
+        if (moves.size() % 2 == 0) {
+            chessMap[x][y] = Color.BLACK;
+        } else {
+            chessMap[x][y] = Color.WHITE;
         }
-        if(round==169){
-            return -2;
+        moves.add(new byte[]{x,y});
+        if(moves.size()==169){
+            return Color.GRAY;
         }
         int l,r;
         for(l=0;x+l>=0&&chessMap[x+l][y]==chessMap[x][y];l--);
@@ -59,15 +54,13 @@ public class Gobang {
             return chessMap[x][y];
         return 0;
     }
-    /* 悔棋，僅有一次悔棋機會*/
-    /* -1: 尚未開始對弈*/
-    /* -2: 此回合已悔棋過*/
+    /* 悔棋，悔到爽*/
     public int repentChess() {
-        if(round==0){return -1;}
-        if(lastMoveX==-2||lastMoveY==-2){return -2;}
-        chessMap[lastMoveX][lastMoveY] = 0;
-        lastMoveX = lastMoveY = -2;
-        round--;
+        if(moves.size()==0)
+            return -1;
+        byte [] last= moves.get(moves.size() - 1);
+        chessMap[last[0]][last[1]] = 0;
+        moves.remove(last);
         return 0;
     }
     public void reset(){
@@ -76,7 +69,6 @@ public class Gobang {
                 chessMap[i][j]=0;
             }
         }
-        lastMoveY=lastMoveY=-1;
-        round=0;
+        moves.clear();
     }
 }

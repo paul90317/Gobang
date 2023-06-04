@@ -11,7 +11,7 @@ import androidx.annotation.UiThread;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.gobang.MainActivity;
 import com.example.gobang.R;
-import com.example.gobang.web.WebSocket;
+import com.example.gobang.util.WebSocket;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

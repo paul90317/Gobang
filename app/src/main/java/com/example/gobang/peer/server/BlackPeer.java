@@ -4,10 +4,10 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
-import com.example.gobang.peer.CreationDialog;
+import com.example.gobang.util.NestedDialog;
 import com.example.gobang.peer.PeerActivity;
-import com.example.gobang.web.IPAddressUtil;
-import com.example.gobang.web.WebSocket;
+import com.example.gobang.util.IPAddress;
+import com.example.gobang.util.WebSocket;
 
 import java.net.ServerSocket;
 import java.util.List;
@@ -32,7 +32,7 @@ public class BlackPeer extends PeerActivity {
         }
         List<String> ips;
         try{
-            ips = IPAddressUtil.getIPAddress();
+            ips = IPAddress.getIPAddress();
             if(ips.size()==0){
                 throw new Exception();
             }
@@ -45,7 +45,7 @@ public class BlackPeer extends PeerActivity {
         for (String ip:ips) {
             msg+=ip+":"+port+"\n";
         }
-        CreationDialog preDialog=new CreationDialog(self);
+        NestedDialog preDialog=new NestedDialog(self);
         final String msgFinal=msg;
         UIHandler.post(()->preDialog.alert("等待對手",msgFinal,"取消",()->{
             webHandler.submit(()->{
@@ -70,7 +70,7 @@ public class BlackPeer extends PeerActivity {
     }
 
     private boolean ifContinue(int win){
-        CreationDialog dialog=new CreationDialog(self);
+        NestedDialog dialog=new NestedDialog(self);
         switch(win){
             case Color.BLACK:
                 dialog.alert("遊戲結束","你贏了!","回主畫面",()->{
@@ -82,7 +82,7 @@ public class BlackPeer extends PeerActivity {
                     exit();
                 });
                 break;
-            case -2:
+            case Color.GRAY:
                 dialog.alert("遊戲結束","平局!","回主畫面",()->{
                     exit();
                 });
@@ -100,8 +100,7 @@ public class BlackPeer extends PeerActivity {
         dotUpdateOnce();
         statusView.setText("輪到你了");
         player.postClick((x, y)->{
-            int win=player.placeChess(x,y);
-            if(ifContinue(win)){
+            if(ifContinue(player.placeChess(x,y))){
                 dotShow=true;
                 statusView.setText("等待對手行動");
                 webHandler.submit(()->{
@@ -116,8 +115,7 @@ public class BlackPeer extends PeerActivity {
                         return;
                     }
                     UIHandler.post(()->{
-                        int win1=player.placeChess(point[0],point[1]);
-                        if(ifContinue(win1))
+                        if(ifContinue(player.placeChess(point[0],point[1])))
                             loop();
                     });
                 });
