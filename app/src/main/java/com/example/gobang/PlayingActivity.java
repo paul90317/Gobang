@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.gobang.peer.ChessBoardASync;
+import com.example.gobang.util.NestedDialog;
 
 public class PlayingActivity extends AppCompatActivity {
     private ChessBoardASync chessBoard;
@@ -50,16 +51,25 @@ public class PlayingActivity extends AppCompatActivity {
     }
 
     public  void repent_listener(View view){
-        int ret = chessBoard.repentChess();
+        boolean ret = chessBoard.repentChess();
         if(chessBoard.getRound()%2==0){
             setTurnText("現在輪到:黑");
         }else{
             setTurnText("現在輪到:白");
         }
-        if (ret==-1){
+        if (!ret){
             setRepentMsgText("你還沒有下棋！");
         }
-        chessBoard.invalidate();
+    }
+    public  void ai_listener(View view){
+        showMessageIfWin(chessBoard.AIPlaceChess());
+        setRepentMsgText("");
+        //現在是誰
+        if(chessBoard.getRound()%2==0){
+            setTurnText("現在輪到:黑");
+        }else{
+            setTurnText("現在輪到:白");
+        }
     }
 
     public  void back_to_home_listener(View view){
@@ -74,30 +84,23 @@ public class PlayingActivity extends AppCompatActivity {
     public void showMessageIfWin(int color) {
         if(color==0)
             return;
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("遊戲結束");
+        NestedDialog dialog=new NestedDialog(this);
         if(color== Color.BLACK){
-            builder.setMessage("黑色贏了!");
-        }else if(color==Color.WHITE) {
-            builder.setMessage("白色贏了!");
-        }
-        else if(color==-2){
-            builder.setMessage("和局!");
-        }
-        builder.setPositiveButton("回主畫面", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+            dialog.alert("遊戲結束","黑色贏了!","回主畫面",()->{
                 Intent attractionIntent = new Intent(self, MainActivity.class);
                 startActivity(attractionIntent);
-                dialog.dismiss();
-            }
-        });
-
-        AlertDialog dialog = builder.create();
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setCancelable(false);
-        dialog.show();
-
+            });
+        }else if(color==Color.WHITE) {
+            dialog.alert("遊戲結束","白色贏了!","回主畫面",()->{
+                Intent attractionIntent = new Intent(self, MainActivity.class);
+                startActivity(attractionIntent);
+            });
+        }
+        else if(color==-2){
+            dialog.alert("遊戲結束","和局!","回主畫面",()->{
+                Intent attractionIntent = new Intent(self, MainActivity.class);
+                startActivity(attractionIntent);
+            });
+        }
     }
 }

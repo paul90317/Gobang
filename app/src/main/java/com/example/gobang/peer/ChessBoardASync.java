@@ -64,8 +64,15 @@ public class ChessBoardASync extends View {
         invalidate();
         return temp;
     }
-    public int repentChess(){
-        return game.repentChess();
+    public int AIPlaceChess(){
+        int temp = game.AIPlaceChess();
+        invalidate();
+        return temp;
+    }
+    public boolean repentChess(){
+        boolean temp = game.repentChess();
+        invalidate();
+        return temp;
     }
     public int getRound(){
         return game.getRound();
