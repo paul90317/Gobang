@@ -172,6 +172,13 @@ public class Gobang {
     }
     private final static Comparator<Strategy> inc=(a,b)->a.s-b.s;
     private final static Comparator<Strategy> dec=(a,b)->b.s-a.s;
+
+    public int AIPlaceChess() {
+        if(getRound()==0)
+            return placeChess((byte) (15>>1), (byte) (15>>1));
+        return alphaBetaPlaceChess(1);
+    }
+
     private class Strategy{
         public byte x,y;
         public int s;
@@ -218,7 +225,10 @@ public class Gobang {
             return beta;
         }
     }
-    public int AIPlaceChess(){
+    private int alphaBeta(int deep, boolean turn){
+        return alphaBeta(deep, Integer.MIN_VALUE,Integer.MAX_VALUE,turn);
+    }
+    private int alphaBetaPlaceChess(int deep){
         Strategy temp;
         Strategy alpha=new Strategy((byte)-1,(byte)-1,Integer.MIN_VALUE) ;
         Strategy beta=new Strategy((byte)-1,(byte)-1,Integer.MAX_VALUE) ;
@@ -227,7 +237,7 @@ public class Gobang {
                 for(byte y=0;y<15;y++){
                     if(chessMap[x][y]==0){
                         chessMap[x][y]=Color.BLACK;
-                        temp=new Strategy(x,y, alphaBeta(1,alpha.s,beta.s,true));
+                        temp=new Strategy(x,y, alphaBeta(deep,alpha.s,beta.s,true));
                         chessMap[x][y]=0;
                         if(temp.s>alpha.s)
                             alpha=temp;
@@ -242,7 +252,7 @@ public class Gobang {
                 for(byte y=0;y<15;y++){
                     if(chessMap[x][y]==0){
                         chessMap[x][y]=Color.WHITE;
-                        temp=new Strategy(x,y, alphaBeta(1,alpha.s,beta.s,false));
+                        temp=new Strategy(x,y, alphaBeta(deep,alpha.s,beta.s,false));
                         chessMap[x][y]=0;
                         if(temp.s<beta.s)
                             beta=temp;
@@ -252,6 +262,114 @@ public class Gobang {
                 }
             }
             return placeChess(beta.x,beta.y);
+        }
+    }
+    private int gameTree(int deep, boolean turn){
+        if(deep<=0)
+            return 0;
+        List<Strategy> candidates=new ArrayList<>();
+        if(!turn){
+            for(byte x=0;x<15;x++){
+                for(byte y=0;y<15;y++){
+                    if(chessMap[x][y]==0){
+                        chessMap[x][y]=Color.BLACK;
+                        candidates.add(new Strategy(x,y,alphaBeta(1,true)));
+                        chessMap[x][y]=0;
+                    }
+                }
+            }
+            candidates.sort(dec);
+            Strategy s=candidates.get(0);
+            chessMap[s.x][s.y]=Color.BLACK;
+            int best=s.s+ gameTree(deep-1,true);
+            chessMap[s.x][s.y]=0;
+            for(int i=1;i<5&&i<candidates.size();i++){
+                s=candidates.get(i);
+                chessMap[s.x][s.y]=Color.BLACK;
+                int temp=s.s+ gameTree(deep-1,true);
+                if(temp>best)
+                    best=temp;
+                chessMap[s.x][s.y]=0;
+            }
+            return best*4/5;
+        }else{
+            for(byte x=0;x<15;x++){
+                for(byte y=0;y<15;y++){
+                    if(chessMap[x][y]==0){
+                        chessMap[x][y]=Color.WHITE;
+                        candidates.add(new Strategy(x,y,alphaBeta(1,false)));
+                        chessMap[x][y]=0;
+                    }
+                }
+            }
+            candidates.sort(inc);
+            Strategy s=candidates.get(0);
+            chessMap[s.x][s.y]=Color.WHITE;
+            int best=s.s+ gameTree(2,false);
+            chessMap[s.x][s.y]=0;
+            for(int i=1;i<5&&i<candidates.size();i++){
+                s=candidates.get(i);
+                chessMap[s.x][s.y]=Color.WHITE;
+                int temp=s.s+ gameTree(2,false);
+                if(temp<best)
+                    best=temp;
+                chessMap[s.x][s.y]=0;
+            }
+            return best*4/5;
+        }
+    }
+    private int gameTreePlaceChess(){
+        List<Strategy> candidates=new ArrayList<>();
+        if(getRound()%2==0){
+            for(byte x=0;x<15;x++){
+                for(byte y=0;y<15;y++){
+                    if(chessMap[x][y]==0){
+                        chessMap[x][y]=Color.BLACK;
+                        candidates.add(new Strategy(x,y,alphaBeta(1,true)));
+                        chessMap[x][y]=0;
+                    }
+                }
+            }
+            candidates.sort(dec);
+            Strategy s=candidates.get(0);
+            chessMap[s.x][s.y]=Color.BLACK;
+            s.s+= alphaBeta(2,true);
+            Strategy best=s;
+            chessMap[s.x][s.y]=0;
+            for(int i=1;i<5&&i<candidates.size();i++){
+                s=candidates.get(i);
+                chessMap[s.x][s.y]=Color.BLACK;
+                s.s+= alphaBeta(2,true);
+                if(s.s>best.s)
+                    best=s;
+                chessMap[s.x][s.y]=0;
+            }
+            return placeChess(best.x,best.y);
+        }else{
+            for(byte x=0;x<15;x++){
+                for(byte y=0;y<15;y++){
+                    if(chessMap[x][y]==0){
+                        chessMap[x][y]=Color.WHITE;
+                        candidates.add(new Strategy(x,y,alphaBeta(1,false)));
+                        chessMap[x][y]=0;
+                    }
+                }
+            }
+            candidates.sort(inc);
+            Strategy s=candidates.get(0);
+            chessMap[s.x][s.y]=Color.WHITE;
+            s.s+= alphaBeta(2,false);
+            Strategy best=s;
+            chessMap[s.x][s.y]=0;
+            for(int i=1;i<5&&i<candidates.size();i++){
+                s=candidates.get(i);
+                chessMap[s.x][s.y]=Color.WHITE;
+                s.s+= alphaBeta(2,false);
+                if(s.s<best.s)
+                    best=s;
+                chessMap[s.x][s.y]=0;
+            }
+            return placeChess(best.x,best.y);
         }
     }
     public void reset(){
