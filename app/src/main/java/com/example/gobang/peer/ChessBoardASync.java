@@ -33,7 +33,7 @@ public class ChessBoardASync extends View {
         super(context, attrs);
         this.context = context;
         // chess
-        gridSize =(float)getHeight()/13;
+        gridSize =(float)getHeight()/15;
         game=new Gobang();
         mBitmapPaint = new Paint(Paint.DITHER_FLAG);
         //畫點選畫面時顯示的圈圈
@@ -57,7 +57,7 @@ public class ChessBoardASync extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         //初始化空畫布
-        gridSize =(float)getHeight()/13;
+        gridSize =(float)getHeight()/15;
     }
     public int placeChess(byte x,byte y){
         int temp = game.placeChess(x,y);
@@ -95,8 +95,8 @@ public class ChessBoardASync extends View {
             canvas.drawRect(point[0]*gridSize+gridSize*0.1f, point[1]*gridSize+gridSize*0.1f, point[0]*gridSize+gridSize*0.9f, point[1]*gridSize+gridSize*0.9f, redPaint);
         }
         //畫圓圈圈
-        for(int x=0;x<13;x++){
-            for(int y=0;y<13;y++){
+        for(int x=0;x<15;x++){
+            for(int y=0;y<15;y++){
                 circlePaint.setColor(game.getChessColor(x,y));
                 canvas.drawCircle(x*gridSize+gridSize/2, y*gridSize+gridSize/2, gridSize*0.4f, circlePaint);
             }
@@ -114,7 +114,7 @@ public class ChessBoardASync extends View {
         byte y = (byte) (event.getY() / gridSize);
 
         // 確保x, y 不會out of bound
-        if(x>12||y>12||x<0||y<0){
+        if(x>=15||y>=15||x<0||y<0){
             checkY=checkX=-1;
             invalidate();
             return true;

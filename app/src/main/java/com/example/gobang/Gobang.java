@@ -6,7 +6,7 @@ import java.util.*;
 
 public class Gobang {
     public Gobang(){
-        chessMap=new int[13][13];
+        chessMap=new int[15][15];
         moves =new ArrayList<>();
     }
     public int getRound(){
@@ -36,19 +36,19 @@ public class Gobang {
         }
         int l,r;
         for(l=0;x+l>=0&&chessMap[x+l][y]==chessMap[x][y];l--);
-        for(r=0;x+r<13&&chessMap[x+r][y]==chessMap[x][y];r++);
+        for(r=0;x+r<15&&chessMap[x+r][y]==chessMap[x][y];r++);
         if(r-l>5)
             return chessMap[x][y];
         for(l=0;y+l>=0&&chessMap[x][y+l]==chessMap[x][y];l--);
-        for(r=0;y+r<13&&chessMap[x][y+r]==chessMap[x][y];r++);
+        for(r=0;y+r<15&&chessMap[x][y+r]==chessMap[x][y];r++);
         if(r-l>5)
             return chessMap[x][y];
         for(l=0;x+l>=0&&y+l>=0&&chessMap[x+l][y+l]==chessMap[x][y];l--);
-        for(r=0;x+r<13&&y+r<13&&chessMap[x+r][y+r]==chessMap[x][y];r++);
+        for(r=0;x+r<15&&y+r<15&&chessMap[x+r][y+r]==chessMap[x][y];r++);
         if(r-l>5)
             return chessMap[x][y];
-        for(l=0;x+l>=0&&y-l<13&&chessMap[x+l][y-l]==chessMap[x][y];l--);
-        for(r=0;x+r<13&&y-r>=0&&chessMap[x+r][y-r]==chessMap[x][y];r++);
+        for(l=0;x+l>=0&&y-l<15&&chessMap[x+l][y-l]==chessMap[x][y];l--);
+        for(r=0;x+r<15&&y-r>=0&&chessMap[x+r][y-r]==chessMap[x][y];r++);
         if(r-l>5)
             return chessMap[x][y];
         return 0;
@@ -64,8 +64,8 @@ public class Gobang {
     }
     private int getScore(){
         int score=0;
-        for(int i=0;i+4<13;i++){
-            for(int j=0;j<13;j++){
+        for(int i=0;i+4<15;i++){
+            for(int j=0;j<15;j++){
                 int count=0;
                 for(int k=0;k<5;k++){
                     if(chessMap[i+k][j]==Color.BLACK){
@@ -90,8 +90,8 @@ public class Gobang {
                 }
             }
         }
-        for(int i=0;i<13;i++){
-            for(int j=0;j+4<13;j++){
+        for(int i=0;i<15;i++){
+            for(int j=0;j+4<15;j++){
                 int count=0;
                 for(int k=0;k<5;k++){
                     if(chessMap[i][j+k]==Color.BLACK){
@@ -116,8 +116,8 @@ public class Gobang {
                 }
             }
         }
-        for(int i=0;i+4<13;i++){
-            for(int j=0;j+4<13;j++){
+        for(int i=0;i+4<15;i++){
+            for(int j=0;j+4<15;j++){
                 int count=0;
                 for(int k=0;k<5;k++){
                     if(chessMap[i+k][j+k]==Color.BLACK){
@@ -142,8 +142,8 @@ public class Gobang {
                 }
             }
         }
-        for(int i=0;i+4<13;i++){
-            for(int j=4;j<13;j++){
+        for(int i=0;i+4<15;i++){
+            for(int j=4;j<15;j++){
                 int count=0;
                 for(int k=0;k<5;k++){
                     if(chessMap[i+k][j-k]==Color.BLACK){
@@ -182,7 +182,7 @@ public class Gobang {
         }
     }
     private static final int children=5;
-    private static final int a=4,b=5;
+    private static final int a=6,b=7;
     private static final int deep=5;
     static private final int[] scoreMap=new int[]{0,10,100,1000,10000,1000000};
     private int AIScore(int deep, boolean turn){
@@ -190,8 +190,8 @@ public class Gobang {
             return 0;
         List<Strategy> candidates=new ArrayList<>();
         if(!turn){
-            for(byte i=0;i<13;i++){
-                for(byte j=0;j<13;j++){
+            for(byte i=0;i<15;i++){
+                for(byte j=0;j<15;j++){
                     if(chessMap[i][j]==0){
                         chessMap[i][j]=Color.BLACK;
                         candidates.add(new Strategy(i,j,getScore()));
@@ -214,8 +214,8 @@ public class Gobang {
             }
             return best*a/b;
         }else{
-            for(byte i=0;i<13;i++){
-                for(byte j=0;j<13;j++){
+            for(byte i=0;i<15;i++){
+                for(byte j=0;j<15;j++){
                     if(chessMap[i][j]==0){
                         chessMap[i][j]=Color.WHITE;
                         candidates.add(new Strategy(i,j,getScore()));
@@ -244,8 +244,8 @@ public class Gobang {
             return 0;
         List<Strategy> candidates=new ArrayList<>();
         if(getRound()%2==0){
-            for(byte i=0;i<13;i++){
-                for(byte j=0;j<13;j++){
+            for(byte i=0;i<15;i++){
+                for(byte j=0;j<15;j++){
                     if(chessMap[i][j]==0){
                         chessMap[i][j]=Color.BLACK;
                         candidates.add(new Strategy(i,j,getScore()));
@@ -269,8 +269,8 @@ public class Gobang {
             }
             return placeChess(best.x,best.y);
         }else{
-            for(byte i=0;i<13;i++){
-                for(byte j=0;j<13;j++){
+            for(byte i=0;i<15;i++){
+                for(byte j=0;j<15;j++){
                     if(chessMap[i][j]==0){
                         chessMap[i][j]=Color.WHITE;
                         candidates.add(new Strategy(i,j,getScore()));
@@ -296,8 +296,8 @@ public class Gobang {
         }
     }
     public void reset(){
-        for(int i=0;i<13;i++){
-            for(int j=0;j<13;j++){
+        for(int i=0;i<15;i++){
+            for(int j=0;j<15;j++){
                 chessMap[i][j]=0;
             }
         }
