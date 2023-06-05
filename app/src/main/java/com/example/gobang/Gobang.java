@@ -181,118 +181,77 @@ public class Gobang {
             this.s=s;
         }
     }
-    private static final int children=5;
-    private static final int a=6,b=7;
-    private static final int deep=5;
     static private final int[] scoreMap=new int[]{0,10,100,1000,10000,1000000};
-    private int AIScore(int deep, boolean turn){
+    private int alphaBeta(int deep, int alpha, int beta, boolean turn){
         if(deep<=0)
-            return 0;
-        List<Strategy> candidates=new ArrayList<>();
+            return getScore();
+        int temp;
         if(!turn){
-            for(byte i=0;i<15;i++){
-                for(byte j=0;j<15;j++){
-                    if(chessMap[i][j]==0){
-                        chessMap[i][j]=Color.BLACK;
-                        candidates.add(new Strategy(i,j,getScore()));
-                        chessMap[i][j]=0;
+            for(byte x=0;x<15;x++){
+                for(byte y=0;y<15;y++){
+                    if(chessMap[x][y]==0){
+                        chessMap[x][y]=Color.BLACK;
+                        temp= alphaBeta(deep-1,alpha,beta,true);
+                        chessMap[x][y]=0;
+                        if(temp>alpha)
+                            alpha=temp;
+                        if(alpha>=beta)
+                            break;
                     }
                 }
             }
-            candidates.sort(dec);
-            Strategy s=candidates.get(0);
-            chessMap[s.x][s.y]=Color.BLACK;
-            int best=s.s+AIScore(deep-1,true);
-            chessMap[s.x][s.y]=0;
-            for(int i=1;i<children&&i<candidates.size();i++){
-                s=candidates.get(i);
-                chessMap[s.x][s.y]=Color.BLACK;
-                int temp=s.s+AIScore(deep-1,true);
-                if(temp>best)
-                    best=temp;
-                chessMap[s.x][s.y]=0;
-            }
-            return best*a/b;
+            return alpha;
         }else{
-            for(byte i=0;i<15;i++){
-                for(byte j=0;j<15;j++){
-                    if(chessMap[i][j]==0){
-                        chessMap[i][j]=Color.WHITE;
-                        candidates.add(new Strategy(i,j,getScore()));
-                        chessMap[i][j]=0;
+            for(byte x=0;x<15;x++){
+                for(byte y=0;y<15;y++){
+                    if(chessMap[x][y]==0){
+                        chessMap[x][y]=Color.WHITE;
+                        temp= alphaBeta(deep-1,alpha,beta,false);
+                        chessMap[x][y]=0;
+                        if(temp<beta)
+                            beta=temp;
+                        if(alpha>=beta)
+                            break;
                     }
                 }
             }
-            candidates.sort(inc);
-            Strategy s=candidates.get(0);
-            chessMap[s.x][s.y]=Color.WHITE;
-            int best=s.s+AIScore(deep-1,false);
-            chessMap[s.x][s.y]=0;
-            for(int i=1;i<children&&i<candidates.size();i++){
-                s=candidates.get(i);
-                chessMap[s.x][s.y]=Color.WHITE;
-                int temp=s.s+AIScore(deep-1,false);
-                if(temp<best)
-                    best=temp;
-                chessMap[s.x][s.y]=0;
-            }
-            return best*a/b;
+            return beta;
         }
     }
     public int AIPlaceChess(){
-        if(deep<=0)
-            return 0;
-        List<Strategy> candidates=new ArrayList<>();
+        Strategy temp;
+        Strategy alpha=new Strategy((byte)-1,(byte)-1,Integer.MIN_VALUE) ;
+        Strategy beta=new Strategy((byte)-1,(byte)-1,Integer.MAX_VALUE) ;
         if(getRound()%2==0){
-            for(byte i=0;i<15;i++){
-                for(byte j=0;j<15;j++){
-                    if(chessMap[i][j]==0){
-                        chessMap[i][j]=Color.BLACK;
-                        candidates.add(new Strategy(i,j,getScore()));
-                        chessMap[i][j]=0;
+            for(byte x=0;x<15;x++){
+                for(byte y=0;y<15;y++){
+                    if(chessMap[x][y]==0){
+                        chessMap[x][y]=Color.BLACK;
+                        temp=new Strategy(x,y, alphaBeta(1,alpha.s,beta.s,true));
+                        chessMap[x][y]=0;
+                        if(temp.s>alpha.s)
+                            alpha=temp;
+                        if(alpha.s == beta.s)
+                            break;
                     }
                 }
             }
-            candidates.sort(dec);
-            Strategy s=candidates.get(0);
-            chessMap[s.x][s.y]=Color.BLACK;
-            s.s+=AIScore(deep-1,true);
-            Strategy best=s;
-            chessMap[s.x][s.y]=0;
-            for(int i=1;i<5&&i<candidates.size();i++){
-                s=candidates.get(i);
-                chessMap[s.x][s.y]=Color.BLACK;
-                s.s+=AIScore(deep-1,true);
-                if(s.s>best.s)
-                    best=s;
-                chessMap[s.x][s.y]=0;
-            }
-            return placeChess(best.x,best.y);
+            return placeChess(alpha.x,alpha.y);
         }else{
-            for(byte i=0;i<15;i++){
-                for(byte j=0;j<15;j++){
-                    if(chessMap[i][j]==0){
-                        chessMap[i][j]=Color.WHITE;
-                        candidates.add(new Strategy(i,j,getScore()));
-                        chessMap[i][j]=0;
+            for(byte x=0;x<15;x++){
+                for(byte y=0;y<15;y++){
+                    if(chessMap[x][y]==0){
+                        chessMap[x][y]=Color.WHITE;
+                        temp=new Strategy(x,y, alphaBeta(1,alpha.s,beta.s,false));
+                        chessMap[x][y]=0;
+                        if(temp.s<beta.s)
+                            beta=temp;
+                        if(alpha.s == beta.s)
+                            break;
                     }
                 }
             }
-            candidates.sort(inc);
-            Strategy s=candidates.get(0);
-            chessMap[s.x][s.y]=Color.WHITE;
-            s.s+=AIScore(deep-1,false);
-            Strategy best=s;
-            chessMap[s.x][s.y]=0;
-            for(int i=1;i<5&&i<candidates.size();i++){
-                s=candidates.get(i);
-                chessMap[s.x][s.y]=Color.WHITE;
-                s.s+=AIScore(deep-1,false);
-                if(s.s<best.s)
-                    best=s;
-                chessMap[s.x][s.y]=0;
-            }
-            return placeChess(best.x,best.y);
+            return placeChess(beta.x,beta.y);
         }
     }
     public void reset(){
