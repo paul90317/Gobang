@@ -1,4 +1,4 @@
-package com.example.gobang.peer;
+package com.example.gobang;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -65,7 +65,7 @@ public class ChessBoardASync extends View {
         return temp;
     }
     public int AIPlaceChess(){
-        int temp = game.AIPlaceChess();
+        int temp = game.aiPlaceChess();
         invalidate();
         return temp;
     }

@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.UiThread;
 import androidx.appcompat.app.AppCompatActivity;
+import com.example.gobang.ChessBoardASync;
 import com.example.gobang.MainActivity;
 import com.example.gobang.R;
 import com.example.gobang.util.WebSocket;
@@ -66,7 +67,8 @@ abstract public class PeerActivity extends AppCompatActivity {
     }
     public void surrender(View view) {
         exit();
-        anotherPlayer.close();
+        if(anotherPlayer != null)
+            anotherPlayer.close();
         webHandler.shutdown();
     }
 }

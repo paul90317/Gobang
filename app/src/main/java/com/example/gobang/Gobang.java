@@ -62,7 +62,7 @@ public class Gobang {
         moves.remove(last);
         return true;
     }
-    private int getScore(){
+    private int heuristic(){
         int score=0;
         for(int i=0;i+4<15;i++){
             for(int j=0;j<15;j++){
@@ -184,7 +184,7 @@ public class Gobang {
     static private final int[] scoreMap=new int[]{0,10,100,1000,10000,1000000};
     private int alphaBeta(int deep, int alpha, int beta, boolean turn){
         if(deep<=0)
-            return getScore();
+            return heuristic();
         int temp;
         if(!turn){
             for(byte x=0;x<15;x++){
@@ -218,7 +218,12 @@ public class Gobang {
             return beta;
         }
     }
-    public int AIPlaceChess(){
+    public int aiPlaceChess(){
+        if(getRound()==0)
+            return placeChess((byte)(15>>1),(byte)(15>>1));
+        return alphaBetaPlaceChess(1);
+    }
+    public int alphaBetaPlaceChess(int deep){
         Strategy temp;
         Strategy alpha=new Strategy((byte)-1,(byte)-1,Integer.MIN_VALUE) ;
         Strategy beta=new Strategy((byte)-1,(byte)-1,Integer.MAX_VALUE) ;
@@ -227,7 +232,7 @@ public class Gobang {
                 for(byte y=0;y<15;y++){
                     if(chessMap[x][y]==0){
                         chessMap[x][y]=Color.BLACK;
-                        temp=new Strategy(x,y, alphaBeta(1,alpha.s,beta.s,true));
+                        temp=new Strategy(x,y, alphaBeta(deep,alpha.s,beta.s,true));
                         chessMap[x][y]=0;
                         if(temp.s>alpha.s)
                             alpha=temp;
@@ -242,7 +247,7 @@ public class Gobang {
                 for(byte y=0;y<15;y++){
                     if(chessMap[x][y]==0){
                         chessMap[x][y]=Color.WHITE;
-                        temp=new Strategy(x,y, alphaBeta(1,alpha.s,beta.s,false));
+                        temp=new Strategy(x,y, alphaBeta(deep,alpha.s,beta.s,false));
                         chessMap[x][y]=0;
                         if(temp.s<beta.s)
                             beta=temp;

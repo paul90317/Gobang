@@ -10,13 +10,14 @@ import com.example.gobang.util.IPAddress;
 import com.example.gobang.util.WebSocket;
 
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.List;
 
 public class BlackPeer extends PeerActivity {
     ServerSocket server;
+    int port;
     private void init(){
         server=null;
-        int port;
         for(port = 7777; port<=8080; port ++){
             try{
                 server=new ServerSocket(port);
@@ -38,6 +39,7 @@ public class BlackPeer extends PeerActivity {
             }
         }catch (Exception e){
             toast("建立失敗，檢查你的網路功能");
+            webHandler.shutdown();
             exit();
             return;
         }
@@ -48,17 +50,22 @@ public class BlackPeer extends PeerActivity {
         NestedDialog preDialog=new NestedDialog(self);
         final String msgFinal=msg;
         UIHandler.post(()->preDialog.alert("等待對手",msgFinal,"取消",()->{
-            webHandler.submit(()->{
+            //prevent stuck
+            new Thread(()->{
                 try{
-                    server.close();
+                    exit();
+                    server=null;
+                    new Socket("127.0.0.1",port).close();
+                    webHandler.shutdown();
                 }catch (Exception e){
                     Log.i("ERROR",e.toString());
                 }
-            });
-            exit();
+            }).start();
         }));
         try{
             anotherPlayer=new WebSocket(server.accept());
+            if(server==null)
+                return;
             server.close();
             preDialog.cancel();
             UIHandler.post(()->loop());
